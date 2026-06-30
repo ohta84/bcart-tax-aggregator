@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>クレジット売上 税率別集計ツール</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Meiryo', 'Yu Gothic', sans-serif; background: #f0f2f5; min-height: 100vh; }
+.header { background: #1a56db; color: white; padding: 20px 30px; }
+.header h1 { font-size: 1.4rem; font-weight: bold; }
+.header p { font-size: 0.85rem; margin-top: 4px; opacity: 0.85; }
+.container { max-width: 900px; margin: 30px auto; padding: 0 20px; }
+.card { background: white; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); margin-bottom: 20px; padding: 24px; }
+.upload-area { border: 2px dashed #c0ccda; border-radius: 8px; padding: 40px; text-align: center; cursor: pointer; transition: all 0.2s; }
+.upload-area:hover { border-color: #1a56db; background: #f0f5ff; }
+.upload-area.dragover { border-color: #1a56db; background: #e8f0fe; }
+.upload-icon { font-size: 3rem; margin-bottom: 12px; }
+.upload-text { color: #555; font-size: 0.95rem; }
+.upload-text strong { color: #1a56db; }
+#fileInput { display: none; }
+.btn { background: #1a56db; color: white; border: none; padding: 10px 24px; border-radius: 6px; cursor: pointer; font-size: 0.95rem; font-weight: bold; }
+.btn-sm { padding: 6px 14px; font-size: 0.85rem; }
+.results { display: none; }
+.summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+.summary-box { border-radius: 8px; padding: 20px; text-align: center; }
+.box-8 { background: linear-gradient(135deg, #fff7e6, #ffe4b5); border: 1px solid #f5c76e; }
+.box-10 { background: linear-gradient(135deg, #e6f4ff, #bfdfff); border: 1px solid #6eb5f5; }
+.box-total { background: linear-gradient(135deg, #e8f5e9, #c8e6c9); border: 1px solid #6ec96e; grid-column: 1 / -1; }
+.box-label { font-size: 0.85rem; color: #666; margin-bottom: 6px; font-weight: bold; }
+.box-amount { font-size: 1.8rem; font-weight: bold; color: #222; }
+.box-sub { font-size: 0.8rem; color: #888; margin-top: 4px; }
+table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+th { background: #f5f7fa; color: #444; padding: 10px 12px; text-align: left; border-bottom: 2px solid #e0e4ea; white-space: nowrap; }
+td { padding: 9px 12px; border-bottom: 1px solid #eee; }
+tr:hover td { background: #fafbfd; }
+.badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 0.75rem; font-weight: bold; }
+.badge-8 { background: #fff3cd; color: #856404; }
+.badge-10 { background: #cfe2ff; color: #084298; }
+.section-title { font-size: 1rem; font-weight: bold; color: #333; margin-bottom: 14px; border-left: 4px solid #1a56db; padding-left: 10px; }
+.error-msg { background: #fff5f5; border: 1px solid #f5c6cb; color: #842029; padding: 12px 16px; border-radius: 6px; margin-top: 12px; font-size: 0.9rem; }
+.info-box { background: #e8f4fd; border: 1px solid #b8daff; border-radius: 6px; padding: 12px 16px; font-size: 0.85rem; color: #0c5460; margin-bottom: 16px; }
+.export-btn { float: right; margin-top: -4px; }
+.note { font-size: 0.8rem; color: #888; margin-top: 8px; }
+</style>
+</head>
+<body>
+<div class="header">
+<h1>クレジット売上 税率別集計ツール</h1>
+<p>BカートCSVから8%/10%売上を自動集計（クレジット決済のみ・受注重複排除）</p>
+</div>
+<div class="container">
+<div class="card">
+<div class="section-title">CSVファイルを選択</div>
+<div class="upload-area" id="dropZone">
+<div class="upload-icon">📂</div>
+<div class="upload-text"><strong>ここにCSVをドラッグ＆ドロップ</strong><br>またはクリックしてファイルを選択</div>
+</div>
+<input type="file" id="fileInput" accept=".csv,.tsv,.txt">
+<div id="errorMsg"></div>
+</div>
+<div class="results" id="results">
+<div class="card">
+<div class="section-title">集計結果
+<button class="btn btn-sm export-btn" onclick="exportCSV()">CSVエクスポート</button>
+</div>
+<div class="info-box" id="infoBox"></div>
+<div class="summary-grid">
+<div class="summary-box box-8">
+<div class="box-label">8%（軽減税率）合計</div>
+<div class="box-amount" id="total8">¥0</div>
+<div class="box-sub" id="sub8"></div>
+</div>
+<div class="summary-box box-10">
+<div class="box-label">10%（標準税率）合計</div>
+<div class="box-amount" id="total10">¥0</div>
+<div class="box-sub" id="sub10"></div>
+</div>
+<div class="summary-box box-total">
+<div class="box-label">クレジット合計（税込）</div>
+<div class="box-amount" id="totalAll">¥0</div>
+<div class="box-sub" id="subAll"></div>
+</div>
+</div>
+</div>
+<div class="card">
+<div class="section-title">受注明細（クレジット・重複排除済み）</div>
+<div style="overflow-x:auto">
+<table id="detailTable">
+<thead><tr>
+<th>受注ID</th><th>受注番号</th><th>受注日時</th><th>会社名／担当者</th>
+<th>受注総額</th><th>8%売上</th><th>10%売上</th><th>送料</th>
+</tr></thead>
+<tbody id="detailBody"></tbody>
+</table>
+</div>
+<p class="note">※同一受注番号の2行目以降は除外。税率別受注総額列から算出。</p>
+</div>
+</div>
+</div>
+<script>
+var aggregatedData=[];
+var dropZone=document.getElementById('dropZone');
+var fileInput=document.getElementById('fileInput');
+dropZone.addEventListener('click',function(){fileInput.click();});
+dropZone.addEventListener('dragover',function(e){e.preventDefault();dropZone.classList.add('dragover');});
+dropZone.addEventListener('dragleave',function(){dropZone.classList.remove('dragover');});
+dropZone.addEventListener('drop',function(e){e.preventDefault();dropZone.classList.remove('dragover');if(e.dataTransfer.files[0])processFile(e.dataTransfer.files[0]);});
+fileInput.addEventListener('change',function(e){if(e.target.files[0])processFile(e.target.files[0]);});
+function processFile(file){
+var reader=new FileReader();
+reader.onload=function(e){try{parseCSV(e.target.result);}catch(err){showError('解析エラー: '+err.message);}};
+reader.readAsText(file,'UTF-8');
+}
+function parseCSV(text){
+document.getElementById('errorMsg').innerHTML='';
+var lines=text.split(/
+?
+/).filter(function(l){return l.trim();});
+if(lines.length<2){showError('データが見つかりません');return;}
+var sep=lines[0].indexOf('	')>=0?'	':',';
+var headers=parseLine(lines[0],sep);
+var idx={};
+var colMap={juchuId:'受注ID',juchuBango:'受注番号',juchuDate:'受注日時',company:'会社名',tanto:'担当者',kessai:'決済方法',juchuSogaku:'受注総額',zeiriSogaku:'税率別受注総額',soryo:'送料'};
+for(var key in colMap){
+var i=headers.indexOf(colMap[key]);
+if(i>=0)idx[key]=i;
+}
+if(idx.kessai===undefined||idx.juchuBango===undefined||idx.zeiriSogaku===undefined){
+showError('必須列が見つかりません。決済方法/受注番号/税率別受注総額列を確認してください。');return;
+}
+var seenOrders={};
+var orders=[];
+var skipCount=0;
+var nonCreditCount=0;
+for(var i=1;i<lines.length;i++){
+var cols=parseLine(lines[i],sep);
+if(cols.length<5)continue;
+var kessai=(cols[idx.kessai]||'').trim();
+var juchuBango=(cols[idx.juchuBango]||'').trim();
+if(kessai.indexOf('クレジット')<0){nonCreditCount++;continue;}
+if(seenOrders[juchuBango]){skipCount++;continue;}
+seenOrders[juchuBango]=true;
+var zeiriRaw=(cols[idx.zeiriSogaku]||'').trim();
+var tax=parseTaxAmounts(zeiriRaw);
+var soryo=idx.soryo!==undefined?parseNum(cols[idx.soryo]):0;
+var juchuSogaku=idx.juchuSogaku!==undefined?parseNum(cols[idx.juchuSogaku]):0;
+orders.push({
+juchuId:idx.juchuId!==undefined?cols[idx.juchuId]:'',
+juchuBango:juchuBango,
+juchuDate:idx.juchuDate!==undefined?(cols[idx.juchuDate]||''):'',
+company:idx.company!==undefined?(cols[idx.company]||''):'',
+tanto:idx.tanto!==undefined?(cols[idx.tanto]||''):'',
+juchuSogaku:juchuSogaku,tax8:tax.tax8,tax10:tax.tax10,soryo:soryo
+});
+}
+aggregatedData=orders;
+showResults(orders,skipCount,nonCreditCount,lines.length-1);
+}
+function parseTaxAmounts(raw){
+var tax8=0,tax10=0;
+var parts=raw.split(/[
+
+]+/);
+for(var i=0;i<parts.length;i++){
+var m=parts[i].match(/^(d+):([d.]+)/);
+if(m){var rate=parseInt(m[1]);var amount=parseFloat(m[2]);if(rate===8)tax8+=amount;else if(rate===10)tax10+=amount;}
+}
+if(tax8===0&&tax10===0){var n=parseFloat(raw.replace(/[^d.]/g,''));if(!isNaN(n)&&n>0)tax8=n;}
+return{tax8:tax8,tax10:tax10};
+}
+function parseLine(line,sep){
+if(sep==='	')return line.split('	');
+var cols=[],cur='',inQ=false;
+for(var i=0;i<line.length;i++){var c=line[i];if(c==='"')inQ=!inQ;else if(c===sep&&!inQ){cols.push(cur.trim());cur='';}else cur+=c;}
+cols.push(cur.trim());return cols;
+}
+function parseNum(s){var n=parseFloat((s||'').replace(/[^d.-]/g,''));return isNaN(n)?0:n;}
+function fmt(n){return '¥'+Math.round(n).toLocaleString('ja-JP');}
+function showResults(orders,skipCount,nonCreditCount,totalRows){
+var sum8=0,sum10=0,cnt8=0,cnt10=0;
+for(var i=0;i<orders.length;i++){sum8+=orders[i].tax8;sum10+=orders[i].tax10;if(orders[i].tax8>0)cnt8++;if(orders[i].tax10>0)cnt10++;}
+var sumAll=sum8+sum10;
+document.getElementById('total8').textContent=fmt(sum8);
+document.getElementById('sub8').textContent=cnt8+'件に8%商品あり';
+document.getElementById('total10').textContent=fmt(sum10);
+document.getElementById('sub10').textContent=cnt10+'件に10%商品あり';
+document.getElementById('totalAll').textContent=fmt(sumAll);
+document.getElementById('subAll').textContent='クレジット決済 '+orders.length+'件';
+document.getElementById('infoBox').innerHTML='全データ <strong>'+totalRows+'行</strong> → クレジット決済 <strong>'+orders.length+'件</strong>（重複除外 '+skipCount+'行、非クレジット '+nonCreditCount+'行）';
+var tbody=document.getElementById('detailBody');
+tbody.innerHTML='';
+for(var i=0;i<orders.length;i++){
+var o=orders[i];
+var tr=document.createElement('tr');
+tr.innerHTML='<td>'+esc(o.juchuId)+'</td><td>'+esc(o.juchuBango)+'</td><td>'+esc(o.juchuDate.substring(0,10))+'</td><td>'+esc(o.company||o.tanto)+'</td><td style="text-align:right">'+fmt(o.juchuSogaku)+'</td><td style="text-align:right">'+(o.tax8>0?'<span class="badge badge-8">'+fmt(o.tax8)+'</span>':'-')+'</td><td style="text-align:right">'+(o.tax10>0?'<span class="badge badge-10">'+fmt(o.tax10)+'</span>':'-')+'</td><td style="text-align:right">'+(o.soryo>0?fmt(o.soryo):'-')+'</td>';
+tbody.appendChild(tr);
+}
+document.getElementById('results').style.display='block';
+document.getElementById('results').scrollIntoView({behavior:'smooth'});
+}
+function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function exportCSV(){
+var rows=[['受注ID','受注番号','受注日時','会社名','担当者','受注総額','8%売上','10%売上','送料']];
+for(var i=0;i<aggregatedData.length;i++){var o=aggregatedData[i];rows.push([o.juchuId,o.juchuBango,o.juchuDate,o.company,o.tanto,o.juchuSogaku,o.tax8,o.tax10,o.soryo]);}
+var csv=rows.map(function(r){return r.map(function(c){return'"'+String(c).replace(/"/g,'""')+'"';}).join(',');}).join('
+');
+var blob=new Blob(['﻿'+csv],{type:'text/csv;charset=utf-8'});
+var url=URL.createObjectURL(blob);
+var a=document.createElement('a');a.href=url;a.download='credit_tax_summary.csv';a.click();URL.revokeObjectURL(url);
+}
+function showError(msg){document.getElementById('errorMsg').innerHTML='<div class="error-msg">⚠️ '+msg+'</div>';}
+</script>
+</body>
+</html>
