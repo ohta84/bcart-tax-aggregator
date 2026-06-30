@@ -2,47 +2,46 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>クレジット売上 税率別集計ツール</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Meiryo','Yu Gothic',sans-serif;background:#f0f2f5;min-height:100vh}
-.hd{background:#1a56db;color:#fff;padding:18px 28px}
-.hd h1{font-size:1.3rem;font-weight:bold}
-.hd p{font-size:0.82rem;margin-top:4px;opacity:.85}
-.wrap{max-width:950px;margin:28px auto;padding:0 18px}
-.card{background:#fff;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.08);margin-bottom:18px;padding:22px}
-.dz{border:2px dashed #adc;border-radius:8px;padding:36px 20px;text-align:center;cursor:pointer;background:#fafff8;transition:.2s}
-.dz.over{border-color:#1a56db;background:#f0f5ff}
-.dz p{color:#555;font-size:.95rem;margin-top:8px}
-.dz strong{color:#1a56db}
+.hd{background:#1a56db;color:#fff;padding:16px 26px}
+.hd h1{font-size:1.25rem;font-weight:bold}
+.hd p{font-size:.8rem;margin-top:3px;opacity:.85}
+.wrap{max-width:960px;margin:24px auto;padding:0 16px}
+.card{background:#fff;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.08);margin-bottom:16px;padding:20px}
+.dz{border:2px dashed #adc;border-radius:8px;padding:34px 20px;text-align:center;cursor:pointer;background:#fafff8;transition:.2s}
+.dz.over,.dz:hover{border-color:#1a56db;background:#f0f5ff}
 #fi{display:none}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
-.box{border-radius:8px;padding:18px;text-align:center}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.box{border-radius:8px;padding:16px;text-align:center}
 .b8{background:linear-gradient(135deg,#fff7e6,#ffd97d);border:1px solid #f5c76e}
 .b10{background:linear-gradient(135deg,#e6f3ff,#a8d8ff);border:1px solid #6eb5f5}
 .btot{background:linear-gradient(135deg,#e8f5e9,#b8e0b8);border:1px solid #6ec96e;grid-column:1/-1}
-.blbl{font-size:.82rem;color:#666;margin-bottom:5px;font-weight:bold}
-.bamt{font-size:1.7rem;font-weight:bold;color:#222}
-.bsub{font-size:.78rem;color:#888;margin-top:3px}
-table{width:100%;border-collapse:collapse;font-size:.84rem}
-th{background:#f5f7fa;color:#444;padding:9px 11px;text-align:left;border-bottom:2px solid #dde;white-space:nowrap}
-td{padding:8px 11px;border-bottom:1px solid #eee;vertical-align:middle}
+.blbl{font-size:.8rem;color:#555;margin-bottom:4px;font-weight:bold}
+.bamt{font-size:1.6rem;font-weight:bold;color:#222}
+.bsub{font-size:.76rem;color:#888;margin-top:2px}
+table{width:100%;border-collapse:collapse;font-size:.83rem}
+th{background:#f5f7fa;color:#444;padding:8px 10px;text-align:left;border-bottom:2px solid #dde;white-space:nowrap}
+td{padding:7px 10px;border-bottom:1px solid #eee;vertical-align:middle}
 tr:hover td{background:#fafbfd}
-.b8t{background:#fff3cd;color:#856404;padding:2px 7px;border-radius:9px;font-size:.78rem;font-weight:bold}
-.b10t{background:#cfe2ff;color:#084298;padding:2px 7px;border-radius:9px;font-size:.78rem;font-weight:bold}
-.ttl{font-size:.97rem;font-weight:bold;color:#333;margin-bottom:12px;border-left:4px solid #1a56db;padding-left:9px}
-.err{background:#fff5f5;border:1px solid #f5c6cb;color:#842029;padding:11px 14px;border-radius:6px;margin-top:10px;font-size:.84rem;white-space:pre-wrap}
-.info{background:#e8f4fd;border:1px solid #b8daff;border-radius:6px;padding:11px 14px;font-size:.84rem;color:#0c5460;margin-bottom:14px}
-.ebtn{float:right;margin-top:-4px;background:#1a56db;color:#fff;border:none;padding:5px 13px;border-radius:5px;cursor:pointer;font-size:.84rem;font-weight:bold}
-.note{font-size:.78rem;color:#888;margin-top:7px}
+.b8t{background:#fff3cd;color:#856404;padding:2px 6px;border-radius:8px;font-size:.76rem;font-weight:bold;white-space:nowrap}
+.b10t{background:#cfe2ff;color:#084298;padding:2px 6px;border-radius:8px;font-size:.76rem;font-weight:bold;white-space:nowrap}
+.ttl{font-size:.95rem;font-weight:bold;color:#333;margin-bottom:10px;border-left:4px solid #1a56db;padding-left:8px}
+.err{background:#fff5f5;border:1px solid #f9c;color:#842029;padding:10px 13px;border-radius:6px;margin-top:8px;font-size:.82rem;white-space:pre-wrap;word-break:break-all}
+.dbg{background:#fffde7;border:1px solid #ffe082;border-radius:6px;padding:10px 13px;font-size:.78rem;color:#555;margin-top:8px;white-space:pre-wrap;word-break:break-all}
+.info{background:#e8f4fd;border:1px solid #b8daff;border-radius:6px;padding:10px 13px;font-size:.82rem;color:#0c5460;margin-bottom:12px}
+.ebtn{float:right;margin-top:-4px;background:#1a56db;color:#fff;border:none;padding:5px 12px;border-radius:5px;cursor:pointer;font-size:.82rem;font-weight:bold}
+.note{font-size:.76rem;color:#888;margin-top:6px}
 #res{display:none}
 </style>
 </head>
 <body>
 <div class="hd">
 <h1>&#128197; クレジット売上 税率別集計ツール</h1>
-<p>Bカート受注CSVを読み込んで 8% / 10% 売上を自動集計（クレジット決済のみ・重複排除）</p>
+<p>Bカート受注CSV &#8594; 8% / 10% 売上自動集計（クレジット決済のみ・受注重複排除）</p>
 </div>
 <div class="wrap">
 <div class="card">
@@ -51,55 +50,38 @@ tr:hover td{background:#fafbfd}
   onclick="document.getElementById('fi').click()"
   ondragover="event.preventDefault();this.classList.add('over')"
   ondragleave="this.classList.remove('over')"
-  ondrop="this.classList.remove('over');event.preventDefault();handleFile(event.dataTransfer.files[0])">
-  <div style="font-size:2.8rem">&#128194;</div>
-  <p><strong>クリックしてファイル選択</strong>、またはここにCSVをドロップ</p>
-  <p style="font-size:.8rem;color:#888;margin-top:6px">UTF-8 / Shift-JIS 両対応 &#183; タブ区切り・カンマ区切り自動判定</p>
+  ondrop="this.classList.remove('over');event.preventDefault();handleDrop(event)">
+  <div style="font-size:2.6rem">&#128194;</div>
+  <p style="color:#555;font-size:.95rem;margin-top:6px"><strong style="color:#1a56db">クリックしてCSVを選択</strong>、またはここにドロップ</p>
+  <p style="font-size:.78rem;color:#888;margin-top:4px">UTF-8 / Shift-JIS &#183; タブ区切り自動対応</p>
 </div>
-<input type="file" id="fi" accept=".csv,.tsv,.txt"
-  onchange="handleFile(this.files[0])">
+<input type="file" id="fi" accept=".csv,.tsv,.txt" onchange="handleChange(this)">
+<div id="dbgbox"></div>
 <div id="errmsg"></div>
 </div>
-
 <div id="res">
 <div class="card">
-<div class="ttl">集計結果
-<button class="ebtn" onclick="doExport()">&#8595; CSVエクスポート</button>
-</div>
+<div class="ttl">集計結果 <button class="ebtn" onclick="doExport()">&#8595; CSVエクスポート</button></div>
 <div class="info" id="info"></div>
 <div class="grid">
-<div class="box b8">
-<div class="blbl">&#128993; 8%（軽減税率）合計</div>
-<div class="bamt" id="t8">0円</div>
-<div class="bsub" id="s8"></div>
-</div>
-<div class="box b10">
-<div class="blbl">&#128309; 10%（標準税率）合計</div>
-<div class="bamt" id="t10">0円</div>
-<div class="bsub" id="s10"></div>
-</div>
-<div class="box btot">
-<div class="blbl">&#9989; クレジット売上合計（税込）</div>
-<div class="bamt" id="tall">0円</div>
-<div class="bsub" id="sall"></div>
-</div>
+<div class="box b8"><div class="blbl">&#128993; 8%（軽減税率）合計</div><div class="bamt" id="t8">0円</div><div class="bsub" id="s8"></div></div>
+<div class="box b10"><div class="blbl">&#128309; 10%（標準税率）合計</div><div class="bamt" id="t10">0円</div><div class="bsub" id="s10"></div></div>
+<div class="box btot"><div class="blbl">&#9989; クレジット売上合計（税込）</div><div class="bamt" id="tall">0円</div><div class="bsub" id="sall"></div></div>
 </div>
 </div>
 <div class="card">
-<div class="ttl">受注明細（クレジット決済・重複排除済み）</div>
+<div class="ttl">受注明細（クレジット・重複排除済み）</div>
 <div style="overflow-x:auto">
 <table>
 <thead><tr>
 <th>受注ID</th><th>受注番号</th><th>受注日時</th><th>会社名/担当者</th>
-<th style="text-align:right">受注総額</th>
-<th style="text-align:right">8%売上</th>
-<th style="text-align:right">10%売上</th>
-<th style="text-align:right">送料</th>
+<th style="text-align:right">受注総額</th><th style="text-align:right">8%売上</th>
+<th style="text-align:right">10%売上</th><th style="text-align:right">送料</th>
 </tr></thead>
 <tbody id="tb"></tbody>
 </table>
 </div>
-<p class="note">※ 同一受注番号の2行目以降を除外。「税率別受注総額」列（例: 8:19116 / 8:12000&amp;10:500）を解析。</p>
+<p class="note">※ 同一受注番号の2行目以降を除外。「税率別受注総額」列（例:8:19116）を使用。</p>
 </div>
 </div>
 </div>
@@ -107,43 +89,60 @@ tr:hover td{background:#fafbfd}
 <script>
 var ROWS = [];
 
-function handleFile(f) {
-  if (!f) return;
+function handleDrop(ev) {
+  var f = ev.dataTransfer && ev.dataTransfer.files && ev.dataTransfer.files[0];
+  if (f) startRead(f);
+}
+function handleChange(inp) {
+  var f = inp && inp.files && inp.files[0];
+  if (f) startRead(f);
+}
+
+function startRead(f) {
+  showDbg('ファイル名: ' + f.name + ' / サイズ: ' + f.size + ' bytes');
   var r = new FileReader();
   r.onload = function(e) {
     var txt = e.target.result;
-    if (txt.indexOf('受注') >= 0 || txt.indexOf('ID') >= 0) {
-      go(txt);
-    } else {
+    showDbg('読込完了。先頭50文字: [' + txt.substring(0,50).replace(/\n/g,'LF').replace(/\r/g,'CR') + ']');
+    // 文字化けチェック
+    if (txt.indexOf('\ufffd') > 10 || (txt.indexOf('\u53d7') < 0 && txt.indexOf('ID') < 0 && f.size > 100)) {
+      // UTF-8で化けている可能性 → Shift-JISで再試行
+      showDbg('UTF-8で文字化けの可能性。Shift-JISで再試行...');
       var r2 = new FileReader();
-      r2.onload = function(e2) { go(e2.target.result); };
+      r2.onload = function(e2) { go(e2.target.result, f.name); };
+      r2.onerror = function() { showErr('ファイル読込失敗(Shift-JIS)'); };
       r2.readAsText(f, 'Shift-JIS');
+    } else {
+      go(txt, f.name);
     }
   };
+  r.onerror = function() { showErr('ファイルを読み込めませんでした'); };
   r.readAsText(f, 'UTF-8');
 }
 
-function go(text) {
+function go(text, fname) {
   document.getElementById('errmsg').innerHTML = '';
   document.getElementById('res').style.display = 'none';
 
-  var raw = text.split('
-');
-  var lines = [];
-  for (var i = 0; i < raw.length; i++) {
-    var ln = raw[i];
-    if (ln.length > 0 && ln.charAt(ln.length - 1) === '
-') ln = ln.slice(0, -1);
-    if (ln.trim().length > 0) lines.push(ln);
+  // BOM除去
+  if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
+
+  // RFC4180準拠CSVパーサー（セル内改行対応）
+  var rows = parseCSV(text);
+  showDbg('パース結果: ' + rows.length + '行 x ' + (rows[0] ? rows[0].length : 0) + '列');
+
+  if (rows.length < 2) {
+    showErr('データが見つかりません。行数: ' + rows.length);
+    return;
   }
 
-  if (lines.length < 2) { showErr('データが見つかりません（行数:' + lines.length + '）'); return; }
-
-  var sep = lines[0].indexOf('	') >= 0 ? '	' : ',';
-  var hdr = spl(lines[0], sep);
+  var hdr = rows[0];
+  showDbg('ヘッダー列数: ' + hdr.length + ' / 先頭5列: ' + hdr.slice(0,5).map(function(h){return '['+h+']';}).join(' '));
 
   function fc(n) {
-    for (var i = 0; i < hdr.length; i++) { if (hdr[i].trim() === n) return i; }
+    for (var i = 0; i < hdr.length; i++) {
+      if (hdr[i].replace(/^\s+|\s+$/g,'') === n) return i;
+    }
     return -1;
   }
 
@@ -151,138 +150,170 @@ function go(text) {
   var iCo=fc('会社名'), iTn=fc('担当者'), iKs=fc('決済方法');
   var iSg=fc('受注総額'), iZr=fc('税率別受注総額'), iSr=fc('送料');
 
+  showDbg('列番号: 受注ID=' + iId + ' 受注番号=' + iBn + ' 決済方法=' + iKs + ' 税率別受注総額=' + iZr + ' 受注総額=' + iSg + ' 送料=' + iSr);
+
   var miss = [];
   if (iKs < 0) miss.push('決済方法');
   if (iBn < 0) miss.push('受注番号');
   if (iZr < 0) miss.push('税率別受注総額');
   if (miss.length > 0) {
-    showErr('列が見つかりません: ' + miss.join(', ') +
-      '
-区切り: ' + (sep === '	' ? 'タブ' : 'カンマ') +
-      '
-先頭6列: ' + hdr.slice(0, 6).join(' | ') +
-      '
-総列数: ' + hdr.length + '  総行数: ' + lines.length);
+    showErr('列が見つかりません: ' + miss.join(', ') + '\n全ヘッダー: ' + hdr.join(' | '));
     return;
   }
 
-  var seen = {}, rows = [], skN = 0, nonN = 0;
-  for (var i = 1; i < lines.length; i++) {
-    var c = spl(lines[i], sep);
-    if (c.length < 10) continue;
-    var ks = (c[iKs] || '').replace(/^s+|s+$/g, '');
-    var bn = (c[iBn] || '').replace(/^s+|s+$/g, '');
-    if (ks.indexOf('クレジット') < 0) { nonN++; continue; }
+  var seen={}, result=[], skN=0, nonN=0;
+  for (var i = 1; i < rows.length; i++) {
+    var c = rows[i];
+    if (c.length < 5) continue;
+    var ks = trim(c[iKs]);
+    var bn = trim(c[iBn]);
+    if (ks.indexOf('\u30af\u30ec\u30b8\u30c3\u30c8') < 0) { nonN++; continue; }
     if (!bn) continue;
     if (seen[bn]) { skN++; continue; }
     seen[bn] = true;
-    var zr = (c[iZr] || '').replace(/^s+|s+$/g, '');
+    var zr = trim(c[iZr]);
     var tx = ptax(zr);
-    rows.push({
-      id:   iId >= 0 ? (c[iId] || '') : '',
-      bn:   bn,
-      dt:   iDt >= 0 ? (c[iDt] || '') : '',
-      co:   iCo >= 0 ? (c[iCo] || '') : '',
-      tn:   iTn >= 0 ? (c[iTn] || '') : '',
-      sg:   iSg >= 0 ? pn(c[iSg]) : 0,
-      t8:   tx.t8,
-      t10:  tx.t10,
-      sr:   iSr >= 0 ? pn(c[iSr]) : 0
+    result.push({
+      id:  iId>=0 ? trim(c[iId]) : '',
+      bn:  bn,
+      dt:  iDt>=0 ? trim(c[iDt]) : '',
+      co:  iCo>=0 ? trim(c[iCo]) : '',
+      tn:  iTn>=0 ? trim(c[iTn]) : '',
+      sg:  iSg>=0 ? pn(c[iSg]) : 0,
+      t8:  tx.t8, t10: tx.t10,
+      sr:  iSr>=0 ? pn(c[iSr]) : 0
     });
   }
 
-  ROWS = rows;
-  render(rows, skN, nonN, lines.length - 1);
+  showDbg('クレジット件数: ' + result.length + ' / 除外(重複): ' + skN + ' / 非クレジット: ' + nonN);
+
+  ROWS = result;
+  render(result, skN, nonN, rows.length - 1);
+}
+
+// RFC4180準拠CSVパーサー（タブ区切り・カンマ区切り・セル内改行対応）
+function parseCSV(text) {
+  // タブ区切りかカンマ区切りか判定（最初の行で判断）
+  var firstNL = text.indexOf('\n');
+  var firstLine = firstNL >= 0 ? text.substring(0, firstNL) : text;
+  var sep = firstLine.indexOf('\t') >= 0 ? '\t' : ',';
+
+  var rows = [], cur = [], cell = '', inQ = false;
+  for (var i = 0; i < text.length; i++) {
+    var ch = text.charAt(i);
+    var code = text.charCodeAt(i);
+    if (inQ) {
+      if (ch === '"') {
+        if (i+1 < text.length && text.charAt(i+1) === '"') {
+          cell += '"'; i++;
+        } else {
+          inQ = false;
+        }
+      } else {
+        cell += ch;
+      }
+    } else {
+      if (ch === '"') {
+        inQ = true;
+      } else if (ch === sep) {
+        cur.push(cell); cell = '';
+      } else if (ch === '\n') {
+        cur.push(cell); cell = '';
+        rows.push(cur); cur = [];
+      } else if (ch === '\r') {
+        // CR無視（CR+LF対応）
+      } else {
+        cell += ch;
+      }
+    }
+  }
+  if (cell.length > 0 || cur.length > 0) {
+    cur.push(cell);
+    if (cur.some(function(v){return v.length > 0;})) rows.push(cur);
+  }
+  return rows;
 }
 
 function ptax(raw) {
-  var t8 = 0, t10 = 0;
-  var parts = raw.split('
-');
-  for (var i = 0; i < parts.length; i++) {
-    var p = parts[i].replace('
-', '').replace(/^s+|s+$/g, '');
-    var m = p.match(/^(d+):(d+)/);
+  var t8=0, t10=0;
+  // "8:19116" or "8:23844
+10:770"
+  var parts = raw.split('\n');
+  for (var i=0; i<parts.length; i++) {
+    var p = parts[i].replace('\r','').replace(/^\s+|\s+$/g,'');
+    var m = p.match(/^(\d+):(\d+)/);
     if (m) {
-      var rt = parseInt(m[1], 10), am = parseInt(m[2], 10);
-      if (rt === 8) t8 += am; else if (rt === 10) t10 += am;
+      var rt=parseInt(m[1],10), am=parseInt(m[2],10);
+      if (rt===8) t8+=am; else if (rt===10) t10+=am;
     }
   }
-  return { t8: t8, t10: t10 };
+  return {t8:t8, t10:t10};
 }
 
-function spl(line, sep) {
-  if (sep === '	') return line.split('	');
-  var cols = [], cur = '', inQ = false;
-  for (var i = 0; i < line.length; i++) {
-    var c = line.charAt(i);
-    if (c === '"') { inQ = !inQ; }
-    else if (c === sep && !inQ) { cols.push(cur); cur = ''; }
-    else cur += c;
-  }
-  cols.push(cur);
-  return cols;
-}
-
-function pn(s) { var n = parseFloat((s || '').toString().replace(/[^d.-]/g, '')); return isNaN(n) ? 0 : n; }
-function fmt(n) { return Math.round(n).toLocaleString('ja-JP') + '円'; }
-function es(s) { return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+function trim(s) { return (s||'').replace(/^[\s\r\n]+|[\s\r\n]+$/g,''); }
+function pn(s) { var n=parseFloat((s||'').toString().replace(/[^\d.\-]/g,'')); return isNaN(n)?0:n; }
+function fmt(n) { return Math.round(n).toLocaleString('ja-JP')+'\u5186'; }
+function es(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 function render(rows, skN, nonN, tot) {
-  var s8=0, s10=0, c8=0, c10=0;
-  for (var i = 0; i < rows.length; i++) {
-    s8 += rows[i].t8; s10 += rows[i].t10;
-    if (rows[i].t8 > 0) c8++;
-    if (rows[i].t10 > 0) c10++;
+  var s8=0,s10=0,c8=0,c10=0;
+  for (var i=0;i<rows.length;i++) {
+    s8+=rows[i].t8; s10+=rows[i].t10;
+    if(rows[i].t8>0) c8++; if(rows[i].t10>0) c10++;
   }
-  document.getElementById('t8').textContent = fmt(s8);
-  document.getElementById('s8').textContent = c8 + '件に8%商品あり';
-  document.getElementById('t10').textContent = fmt(s10);
-  document.getElementById('s10').textContent = c10 + '件に10%商品あり';
-  document.getElementById('tall').textContent = fmt(s8 + s10);
-  document.getElementById('sall').textContent = 'クレジット決済 ' + rows.length + '件';
-  document.getElementById('info').innerHTML =
-    '全' + tot + '行 → クレジット <strong>' + rows.length + '件</strong>（重複除外 ' + skN + '行／非クレジット ' + nonN + '行）';
-
-  var tb = document.getElementById('tb');
-  tb.innerHTML = '';
-  for (var i = 0; i < rows.length; i++) {
-    var o = rows[i];
-    var tr = document.createElement('tr');
-    tr.innerHTML =
-      '<td>' + es(o.id) + '</td>' +
-      '<td>' + es(o.bn) + '</td>' +
-      '<td style="white-space:nowrap">' + es(o.dt.length > 10 ? o.dt.substring(0,10) : o.dt) + '</td>' +
-      '<td>' + es(o.co || o.tn) + '</td>' +
-      '<td style="text-align:right">' + fmt(o.sg) + '</td>' +
-      '<td style="text-align:right">' + (o.t8 > 0 ? '<span class="b8t">' + fmt(o.t8) + '</span>' : '-') + '</td>' +
-      '<td style="text-align:right">' + (o.t10 > 0 ? '<span class="b10t">' + fmt(o.t10) + '</span>' : '-') + '</td>' +
-      '<td style="text-align:right">' + (o.sr > 0 ? fmt(o.sr) : '-') + '</td>';
+  document.getElementById('t8').textContent=fmt(s8);
+  document.getElementById('s8').textContent=c8+'\u4ef6\u306b8%\u5546\u54c1';
+  document.getElementById('t10').textContent=fmt(s10);
+  document.getElementById('s10').textContent=c10+'\u4ef6\u306b10%\u5546\u54c1';
+  document.getElementById('tall').textContent=fmt(s8+s10);
+  document.getElementById('sall').textContent='\u30af\u30ec\u30b8\u30c3\u30c8 '+rows.length+'\u4ef6';
+  document.getElementById('info').innerHTML=
+    '\u5168'+tot+'\u884c \u2192 \u30af\u30ec\u30b8\u30c3\u30c8 <strong>'+rows.length+'\u4ef6</strong>'+
+    '\uff08\u91cd\u8907\u9664\u5916 '+skN+'\u884c / \u975e\u30af\u30ec\u30b8\u30c3\u30c8 '+nonN+'\u884c\uff09';
+  var tb=document.getElementById('tb');
+  tb.innerHTML='';
+  for (var i=0;i<rows.length;i++) {
+    var o=rows[i], tr=document.createElement('tr');
+    tr.innerHTML=
+      '<td>'+es(o.id)+'</td>'+
+      '<td>'+es(o.bn)+'</td>'+
+      '<td style="white-space:nowrap">'+es(o.dt.length>10?o.dt.substring(0,10):o.dt)+'</td>'+
+      '<td>'+es(o.co||o.tn)+'</td>'+
+      '<td style="text-align:right">'+fmt(o.sg)+'</td>'+
+      '<td style="text-align:right">'+(o.t8>0?'<span class="b8t">'+fmt(o.t8)+'</span>':'-')+'</td>'+
+      '<td style="text-align:right">'+(o.t10>0?'<span class="b10t">'+fmt(o.t10)+'</span>':'-')+'</td>'+
+      '<td style="text-align:right">'+(o.sr>0?fmt(o.sr):'-')+'</td>';
     tb.appendChild(tr);
   }
-  document.getElementById('res').style.display = 'block';
-  setTimeout(function() { document.getElementById('res').scrollIntoView({ behavior: 'smooth' }); }, 80);
+  document.getElementById('res').style.display='block';
+  setTimeout(function(){document.getElementById('res').scrollIntoView({behavior:'smooth'});},80);
 }
 
 function doExport() {
-  var hd = ['受注ID','受注番号','受注日時','会社名','担当者','受注総額','8%売上','10%売上','送料'];
-  var lines = [hd.map(function(h){return '"'+h+'"';}).join(',')];
-  for (var i = 0; i < ROWS.length; i++) {
-    var o = ROWS[i];
+  var hd=['\u53d7\u6ce8ID','\u53d7\u6ce8\u756a\u53f7','\u53d7\u6ce8\u65e5\u6642','\u4f1a\u793e\u540d','\u62c5\u5f53\u8005','\u53d7\u6ce8\u7dcf\u984d','8%\u58f2\u4e0a','10%\u58f2\u4e0a','\u9001\u6599'];
+  var lines=[hd.map(function(h){return '"'+h+'"';}).join(',')];
+  for (var i=0;i<ROWS.length;i++) {
+    var o=ROWS[i];
     lines.push([o.id,o.bn,o.dt,o.co,o.tn,o.sg,o.t8,o.t10,o.sr].map(function(v){return '"'+String(v).replace(/"/g,'""')+'"';}).join(','));
   }
-  var blob = new Blob(['﻿' + lines.join('
-')], { type: 'text/csv;charset=utf-8' });
-  var url = URL.createObjectURL(blob);
-  var a = document.createElement('a');
-  a.href = url; a.download = 'credit_tax.csv';
+  var blob=new Blob(['\uFEFF'+lines.join('\n')],{type:'text/csv;charset=utf-8'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');
+  a.href=url; a.download='credit_tax.csv';
   document.body.appendChild(a); a.click();
   document.body.removeChild(a);
-  setTimeout(function() { URL.revokeObjectURL(url); }, 1000);
+  setTimeout(function(){URL.revokeObjectURL(url);},1000);
 }
 
+function showDbg(msg) {
+  var el=document.getElementById('dbgbox');
+  el.innerHTML='<div class="dbg">&#128269; '+es(el.textContent ? el.textContent+'\n'+msg : msg)+'</div>';
+  // 前の内容に追記
+  var d = el.querySelector('.dbg');
+  if (d) d.textContent = (d.textContent||'') + '\n' + msg;
+}
 function showErr(msg) {
-  document.getElementById('errmsg').innerHTML = '<div class="err">&#9888; ' + es(msg) + '</div>';
+  document.getElementById('errmsg').innerHTML='<div class="err">&#9888; '+es(msg)+'</div>';
 }
 </script>
 </body>
