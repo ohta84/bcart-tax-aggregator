@@ -36,6 +36,11 @@ tr:hover td{background:#fafbfd}
 .ebtn{float:right;margin-top:-4px;background:#1a56db;color:#fff;border:none;padding:5px 12px;border-radius:5px;cursor:pointer;font-size:.82rem;font-weight:bold}
 .note{font-size:.76rem;color:#888;margin-top:6px}
 #res{display:none}
+.mtbl{margin-top:4px}
+.mtbl td,.mtbl th{padding:5px 10px}
+.mtbl td.n,.mtbl th.n{text-align:right}
+.mtbl tr.mt td{font-weight:bold;border-top:2px solid #dde;background:#f5f7fa}
+.sttl{font-size:.85rem;font-weight:bold;color:#444;margin:14px 0 4px}
 </style>
 </head>
 <body>
@@ -64,6 +69,8 @@ tr:hover td{background:#fafbfd}
 <div class="box b10"><div class="blbl">10%（標準税率）合計</div><div class="bamt" id="t10">0円</div><div class="bsub" id="s10"></div></div>
 <div class="box btot"><div class="blbl">クレジット売上合計（税込）</div><div class="bamt" id="tall">0円</div><div class="bsub" id="sall"></div></div>
 </div>
+<div class="sttl">納品月別</div>
+<div style="overflow-x:auto"><table class="mtbl"><thead><tr><th>納品月</th><th class="n">件数</th><th class="n">8%売上</th><th class="n">10%売上</th><th class="n">合計</th></tr></thead><tbody id="mtb"></tbody></table></div>
 </div>
 <div class="card">
 <div class="ttl">受注明細（クレジット・重複排除済み）</div>
@@ -206,6 +213,15 @@ function render(rows,skN,nonN,tot,nf){
   document.getElementById("tall").textContent=fmt(s8+s10);
   document.getElementById("sall").textContent="クレジット "+rows.length+"件";
   document.getElementById("info").innerHTML=nf+"ファイル・全"+tot+"行→クレジット <strong>"+rows.length+"件</strong>(重複除外"+skN+"行/非クレジット"+nonN+"行)";
+  var mon={},mk=[];
+  for(var i=0;i<rows.length;i++){var k=dkey(rows[i].dt);k=k?k.substring(0,4)+"年"+parseInt(k.substring(4,6),10)+"月":"納品日なし";
+    if(!mon[k]){mon[k]={n:0,t8:0,t10:0,s:dkey(rows[i].dt).substring(0,6)};mk.push(k);}
+    mon[k].n++;mon[k].t8+=rows[i].t8;mon[k].t10+=rows[i].t10;}
+  mk.sort(function(a,b){var x=mon[a].s,y=mon[b].s;return x<y?1:x>y?-1:0;});
+  var mh="";
+  for(var i=0;i<mk.length;i++){var m=mon[mk[i]];mh+="<tr><td>"+es(mk[i])+"</td><td class=\"n\">"+m.n+"件</td><td class=\"n\">"+fmt(m.t8)+"</td><td class=\"n\">"+fmt(m.t10)+"</td><td class=\"n\">"+fmt(m.t8+m.t10)+"</td></tr>";}
+  mh+="<tr class=\"mt\"><td>合計</td><td class=\"n\">"+rows.length+"件</td><td class=\"n\">"+fmt(s8)+"</td><td class=\"n\">"+fmt(s10)+"</td><td class=\"n\">"+fmt(s8+s10)+"</td></tr>";
+  document.getElementById("mtb").innerHTML=mh;
   var tb=document.getElementById("tb");tb.innerHTML="";
   for(var i=0;i<rows.length;i++){
     var o=rows[i],tr=document.createElement("tr");
