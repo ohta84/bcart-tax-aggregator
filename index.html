@@ -95,19 +95,14 @@ function load(f){
   log("ファイル: "+f.name+" ("+f.size+"bytes)");
   var r=new FileReader();
   r.onload=function(e){
-    var t=e.target.result;
-    log("読込OK 先頭30文字: "+t.substring(0,30));
-    if(t.indexOf("受注")>=0||t.indexOf("ID")>=0){
-      go(t);
-    }else{
-      log("Shift-JISで再読み込み中...");
-      var r2=new FileReader();
-      r2.onload=function(e2){go(e2.target.result);};
-      r2.readAsText(f,"Shift-JIS");
-    }
+    var buf=new Uint8Array(e.target.result),t,enc;
+    try{t=new TextDecoder("utf-8",{fatal:true}).decode(buf);enc="UTF-8";}
+    catch(ex){t=new TextDecoder("shift_jis").decode(buf);enc="Shift-JIS";}
+    log("文字コード: "+enc+" / 先頭30文字: "+t.substring(0,30));
+    go(t);
   };
   r.onerror=function(){err("読込エラー");};
-  r.readAsText(f,"UTF-8");
+  r.readAsArrayBuffer(f);
 }
 
 function go(text){
