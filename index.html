@@ -68,7 +68,7 @@ tr:hover td{background:#fafbfd}
 <div class="card">
 <div class="ttl">受注明細（クレジット・重複排除済み）</div>
 <div style="overflow-x:auto"><table>
-<thead><tr><th>受注ID</th><th>受注番号</th><th>受注日時</th><th>会社名/担当者</th><th>受注総額</th><th>8%売上</th><th>10%売上</th><th>送料</th></tr></thead>
+<thead><tr><th>受注ID</th><th>受注番号</th><th>納品日</th><th>会社名/担当者</th><th>受注総額</th><th>8%売上</th><th>10%売上</th><th>送料</th></tr></thead>
 <tbody id="tb"></tbody>
 </table></div>
 <p class="note">※同一受注番号の2行目以降を除外（複数ファイル間の重複も除外）。「税率別受注総額」列（例:8:19116）を使用。</p>
@@ -120,7 +120,7 @@ function loadAll(fileList){
     });
     if(errs.length)err(errs.join("\n"));
     if(!res.length&&errs.length)return;
-    res.sort(function(a,b){return a.dt<b.dt?-1:a.dt>b.dt?1:0;});
+    res.sort(function(a,b){var x=dkey(a.dt),y=dkey(b.dt);return x<y?1:x>y?-1:0;});
     log("合計: クレジット"+res.length+"件 / 重複"+skN+" / 非クレ"+nonN);
     ROWS=res;
     render(res,skN,nonN,tot,list.length-errs.length);
@@ -132,7 +132,10 @@ function extract(fd,seen){
   if(rows.length<2)return{error:"データ行がありません"};
   var hdr=rows[0];
   function fc(n){for(var i=0;i<hdr.length;i++){if(hdr[i].trim()===n)return i;}return -1;}
-  var iId=fc("受注ID"),iBn=fc("受注番号"),iDt=fc("受注日時");
+  var iId=fc("受注ID"),iBn=fc("受注番号"),iDt=-1,dtName="";
+  var dtC=["納品日","納品予定日","お届け希望日","配送希望日","出荷日","出荷予定日"];
+  for(var k=0;k<dtC.length&&iDt<0;k++){iDt=fc(dtC[k]);if(iDt>=0)dtName=dtC[k];}
+  if(iDt<0){for(var j=0;j<hdr.length;j++){if(hdr[j].indexOf("納品")>=0){iDt=j;dtName=hdr[j].trim();break;}}}
   var iCo=fc("会社名"),iTn=fc("担当者"),iKs=fc("決済方法");
   var iSg=fc("受注総額"),iZr=fc("税率別受注総額"),iSr=fc("送料");
   var miss=[];
@@ -152,7 +155,7 @@ function extract(fd,seen){
     var tx=ptax(trim(c[iZr]));
     out.push({id:iId>=0?trim(c[iId]):"",bn:bn,dt:iDt>=0?trim(c[iDt]):"",co:iCo>=0?trim(c[iCo]):"",tn:iTn>=0?trim(c[iTn]):"",sg:iSg>=0?pn(c[iSg]):0,t8:tx.t8,t10:tx.t10,sr:iSr>=0?pn(c[iSr]):0});
   }
-  log(fd.name+"（"+fd.enc+"）: "+(rows.length-1)+"行 → クレジット"+out.length+"件");
+  log(fd.name+"（"+fd.enc+"）: "+(rows.length-1)+"行 → クレジット"+out.length+"件 / 日付列: "+(dtName||"見つかりません"));
   return{rows:out,skN:skN,nonN:nonN,tot:rows.length-1};
 }
 
@@ -187,6 +190,7 @@ function ptax(raw){
   return{t8:t8,t10:t10};
 }
 
+function dkey(s){var m=(s||"").match(/(\d{4})\D(\d{1,2})\D(\d{1,2})/);return m?m[1]+("0"+m[2]).slice(-2)+("0"+m[3]).slice(-2):"";}
 function trim(s){return(s||"").replace(/^[\s\r\n]+|[\s\r\n]+$/g,"");}
 function pn(s){var n=parseFloat((s||"").toString().replace(/[^\d.\-]/g,""));return isNaN(n)?0:n;}
 function fmt(n){return Math.round(n).toLocaleString("ja-JP")+"円";}
@@ -213,7 +217,7 @@ function render(rows,skN,nonN,tot,nf){
 }
 
 function doExport(){
-  var hd=["受注ID","受注番号","受注日時","会社名","担当者","受注総額","8%売上","10%売上","送料"];
+  var hd=["受注ID","受注番号","納品日","会社名","担当者","受注総額","8%売上","10%売上","送料"];
   var lines=[hd.map(function(h){return'"'+h+'"';}).join(",")];
   for(var i=0;i<ROWS.length;i++){var o=ROWS[i];lines.push([o.id,o.bn,o.dt,o.co,o.tn,o.sg,o.t8,o.t10,o.sr].map(function(v){return'"'+String(v).replace(/"/g,'""')+'"';}).join(","));}
   var blob=new Blob(["\uFEFF"+lines.join("\n")],{type:"text/csv;charset=utf-8"});
