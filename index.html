@@ -1,4 +1,5 @@
-if(miss.length>0){err("列が見つかりません: "+miss.join(", ")+"\n全列: "+hdr.slice(0,10).join(" | "));return;}
+<!DOCTYPE html>
+<html lang="ja">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
@@ -77,7 +78,6 @@ tr:hover td{background:#fafbfd}
 <script>
 var ROWS=[];
 
-// イベント設定
 window.onload=function(){
   var dz=document.getElementById("dz");
   var fi=document.getElementById("fi");
@@ -86,11 +86,12 @@ window.onload=function(){
   dz.ondragover=function(e){e.preventDefault();dz.style.borderColor="#1a56db";};
   dz.ondragleave=function(){dz.style.borderColor="#aaa";};
   dz.ondrop=function(e){e.preventDefault();dz.style.borderColor="#aaa";if(e.dataTransfer.files[0])load(e.dataTransfer.files[0]);};
-  fi.onchange=function(){if(fi.files[0])load(fi.files[0]);};
+  fi.onchange=function(){if(fi.files[0])load(fi.files[0]);fi.value="";};
   if(eb)eb.onclick=doExport;
 };
 
 function load(f){
+  _dbgLines=[];
   log("ファイル: "+f.name+" ("+f.size+"bytes)");
   var r=new FileReader();
   r.onload=function(e){
@@ -127,8 +128,7 @@ function go(text){
   if(iKs<0)miss.push("決済方法");
   if(iBn<0)miss.push("受注番号");
   if(iZr<0)miss.push("税率別受注総額");
-  if(miss.length>0){err("列が見つかりません: "+miss.join(", ")+"
-全列: "+hdr.slice(0,10).join(" | "));return;}
+  if(miss.length>0){err("列が見つかりません: "+miss.join(", ")+"\n全列: "+hdr.slice(0,10).join(" | "));return;}
   var seen={},res=[],skN=0,nonN=0;
   for(var i=1;i<rows.length;i++){
     var c=rows[i];
